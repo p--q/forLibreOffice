@@ -31,7 +31,7 @@ with open("output_constants.html", "w") as f:
 # enums
 enums = []
 enums_list = sorted(idlset('enum ').difference(deprecated_set))
-base_url = lambda t, i: fr"https://api.libreoffice.org/docs/idl/ref/{t}{'_1_1'.join(i.split('.')[:-1])}.html#details"  # t:type, i:IDL
+base_url = lambda t, i: fr"https://api.libreoffice.org/docs/idl/ref/{t}{'_1_1'.join(i.split('.')[:-1])}.html#details"  # t:type, i:IDL, enumだけ上の階層のページを開く。
 for i in enums_list:
 	td = tdm.getByHierarchicalName(i)
 	if td.getTypeClass()==ENUM:
