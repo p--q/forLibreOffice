@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import subprocess 
 import uno
-from com.sun.star.uno.TypeClass import ENUM, STRUCT, CONSTANTS  # enum
+from com.sun.star.uno.TypeClass import ENUM, STRUCT, CONSTANTS, TYPEDEF  # enum
 sdk_path = "/opt/libreoffice6.4/sdk/idl"  # idlフォルダへのパス。
 ctx = uno.getComponentContext()
 tdm = ctx.getByName('/singletons/com.sun.star.reflection.theTypeDescriptionManager')
@@ -28,13 +28,22 @@ for i in constants_list:
 		constants.append(atag("namespace", i, [j.getName().rsplit(".", 1)[1] for j in td.getConstants()]))
 with open("output_constants.html", "w") as f:
 	f.write("\n".join(constants))
-# enums
+# enum
 enums = []
 enums_list = sorted(idlset('enum ').difference(deprecated_set))
-base_url = lambda t, i: fr"https://api.libreoffice.org/docs/idl/ref/{t}{'_1_1'.join(i.split('.')[:-1])}.html#details"  # t:type, i:IDL, enumだけ上の階層のページを開く。
+base_url = lambda t, i: fr"https://api.libreoffice.org/docs/idl/ref/{t}{'_1_1'.join(i.split('.')[:-1])}.html#details"  # t:type, i:IDL, enumとtypedefは上の階層のページを開く。
 for i in enums_list:
 	td = tdm.getByHierarchicalName(i)
 	if td.getTypeClass()==ENUM:
 		enums.append(atag("namespace", i, td.getEnumNames()))
 with open("output_enum.html", "w") as f:
 	f.write("\n".join(enums))
+# typedef
+typedefs = []
+typedefs_list = sorted(idlset('typedef ').difference(deprecated_set))
+for i in typedefs_list:
+	td = tdm.getByHierarchicalName(i)
+	if td.getTypeClass()==TYPEDEF:
+		typedefs.append(atag("namespace", i, td.getReferencedType().getName()))
+with open("output_typedef.html", "w") as f:
+	f.write("\n".join(typedefs))
