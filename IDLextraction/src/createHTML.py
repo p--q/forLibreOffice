@@ -6,7 +6,7 @@ from com.sun.star.uno.TypeClass import ENUM, STRUCT, CONSTANTS, TYPEDEF  # enum
 sdk_path = "/opt/libreoffice6.4/sdk/idl"  # idlフォルダへのパス。
 ctx = uno.getComponentContext()
 tdm = ctx.getByName('/singletons/com.sun.star.reflection.theTypeDescriptionManager')
-idlset = lambda q: set(subprocess.run(fr"grep -rl '{q}' {sdk_path}|sed -E 's@{sdk_path}/(\S+?)\.idl$@\1@;s@/@.@g'", shell=True, capture_output=True).stdout.decode().splitlines())  # シングルクォーテーションだと$が使えない。/をエスケープしないために@を使う。パイプを使うためにshell=Trueにする。
+idlset = lambda q: set(subprocess.run(fr"grep -rl '{q}' {sdk_path}|sed -E 's@{sdk_path}/(\S+?)\.idl$@\1@;s@/@.@g'", shell=True, capture_output=True).stdout.decode().splitlines())  # /をエスケープしないために@を使う。パイプを使うためにshell=Trueにする。
 base_url = lambda t, i: fr"https://api.libreoffice.org/docs/idl/ref/{t}{'_1_1'.join(i.split('.'))}.html"  # t:type, i:IDL
 atag = lambda t, i, m: fr'<a target="_blank" href="{base_url(t, i)}">{i}</a> {m}<br>'
 deprecated_set = idlset("@deprecated ")
